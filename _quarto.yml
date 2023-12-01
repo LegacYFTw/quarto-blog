@@ -1,0 +1,33 @@
+project:
+  type: website
+
+website:
+  title: "Turbasu Chatterjee"
+  repo-url: https://github.com/LegacYFTw/quarto-blog
+  repo-actions: [source]
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - posts.qmd
+    right:
+      - icon: google
+        href: https://scholar.google.com/citations?user=oAlLg2gAAAAJ&hl=en
+      - icon: steam
+        href: https://steamcommunity.com/user/hdr-qrcj/KMMPNJBJ/
+      - icon: linkedin
+        href: https://www.linkedin.com/in/turbasu-chatterjee/
+      - icon: github
+        href: https://github.com/LegacYFTw
+      
+
+  
+
+format:
+  html:
+    theme: zephyr
+    css: styles.css
+    toc: true
+
+
+

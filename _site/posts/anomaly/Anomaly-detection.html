@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Turbasu Chatterjee">
+<meta name="dcterms.date" content="2023-11-14">
+<meta name="description" content="An introduction to basic methodology in anomaly and outlier detection">
+
+<title>Turbasu Chatterjee - Anomaly And Outlier Detection In Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Turbasu Chatterjee</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts.html" rel="" target="">
+ <span class="menu-text">Thoughts and Scribbles</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://scholar.google.com/citations?user=oAlLg2gAAAAJ&amp;hl=en" rel="" target=""><i class="bi bi-google" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://steamcommunity.com/user/hdr-qrcj/KMMPNJBJ/" rel="" target=""><i class="bi bi-steam" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/turbasu-chatterjee/" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/LegacYFTw" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-k-nearest-neighbor-algorithm-for-outlier-detection" id="toc-the-k-nearest-neighbor-algorithm-for-outlier-detection" class="nav-link active" data-scroll-target="#the-k-nearest-neighbor-algorithm-for-outlier-detection">The K-Nearest Neighbor Algorithm For Outlier Detection</a></li>
+  <li><a href="#the-isolation-forest-algorithm-for-anomalies" id="toc-the-isolation-forest-algorithm-for-anomalies" class="nav-link" data-scroll-target="#the-isolation-forest-algorithm-for-anomalies">The Isolation Forest Algorithm For Anomalies</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/LegacYFTw/quarto-blog/blob/main/posts/anomaly/Anomaly-detection.ipynb" class="toc-action">View source</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Anomaly And Outlier Detection In Machine Learning</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">class-project</div>
+    <div class="quarto-category">machine-learning</div>
+    <div class="quarto-category">anomaly-detection</div>
+    <div class="quarto-category">outlier-detection</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    An introduction to basic methodology in anomaly and outlier detection
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Turbasu Chatterjee </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 14, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In the world of data analysis and machine learning, one of the most critical tasks is the detection of outliers and anomalies in data. In this blog post, we’ll explore how to use machine learning techniques to identify outliers and anomalies in data and provide code examples using Python. However, before we do any of that, it is important to define the ideas of anomalies and outliers statistically. Turns out, this is pretty ambiguous, so we will try to clear them up here:</p>
+<ul>
+<li>An outlier is an observation which deviates so much from the other observations as to arouse suspicions that it was generated by a different mechanism, i.e.&nbsp;these are points that are inconsistent with the remainder of the dataset.</li>
+<li>An anomaly is an instance of data that occur very rarely in the dataset and one whose features differ significantly from most of the data and do not conform to a well-defined notion of normal behaviour.</li>
+</ul>
+<p>In this article, we shall employ two elementary methods for outlier detection: The K-Nearest Neighbors (KNN) algorithm and the Isolation Forest algorithm.</p>
+<section id="the-k-nearest-neighbor-algorithm-for-outlier-detection" class="level2">
+<h2 class="anchored" data-anchor-id="the-k-nearest-neighbor-algorithm-for-outlier-detection">The K-Nearest Neighbor Algorithm For Outlier Detection</h2>
+<p>In the realm of supervised learning, the K-Nearest Neighbors (KNN) algorithm stands as a fundamental yet powerful method for classification and regression tasks. This algorithm, rooted in the concept of similarity, is intuitive, versatile, and widely employed across various domains. At its core, KNN is a non-parametric, lazy learning algorithm used for both classification and regression. It operates on the principle of proximity, where the class or value of an unseen data point is determined by the classes or values of its nearest neighbors in the training dataset.</p>
+<p>Let us take a closer look at the inner working of the KNN algorithm. There are 3 main components of the KNN algorithm that we need to learn before we progress:</p>
+<ul>
+<li>For an unseen data point, the KNN computes its distance to all points in the training data. This distance maybe calculated using norms like euclidean norm, minkowski norm, manhattan norm, etc..</li>
+<li>Now the algorithm shall identify the K closest data points based on the calculated distances.</li>
+<li>It will then assign a class that is most common for the K neighbors.</li>
+</ul>
+<p>Let us put theory to practice and use the <code>scikit-learn</code> to identify anomalies in the <code>iris</code> dataset.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Imports</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> NearestNeighbors</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let us load the Iris dataset now.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>iris <span class="op">=</span> load_iris()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(data<span class="op">=</span> np.c_[iris[<span class="st">'data'</span>], iris[<span class="st">'target'</span>]],</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                    columns<span class="op">=</span> iris[<span class="st">'feature_names'</span>] <span class="op">+</span> [<span class="st">'target'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We shall now only use numeric data to make it easier on ourselves.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Consider only numeric features for simplicity</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>numeric_data <span class="op">=</span> data.drop(<span class="st">'target'</span>, axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Lets now invoke the KNN algorithm and set our <code>k</code> to be equal to 5 and fit the algorithm on the numeric dataset that we have now. We will set our <code>k</code> to be equal to 5 in our case.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="dv">5</span>  <span class="co"># Number of neighbors</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> NearestNeighbors(n_neighbors<span class="op">=</span>k)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>knn.fit(numeric_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<style>#sk-container-id-1 {color: black;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>NearestNeighbors()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked=""><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">NearestNeighbors</label><div class="sk-toggleable__content"><pre>NearestNeighbors()</pre></div></div></div></div></div>
+</div>
+</div>
+<p>Now, lets calculate the distance to the <code>k</code> neighbors</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>distances, indices <span class="op">=</span> knn.kneighbors()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let us see what the distances look like now:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>distances</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>array([[0.1       , 0.14142136, 0.14142136, 0.14142136, 0.14142136],
+       [0.14142136, 0.14142136, 0.14142136, 0.17320508, 0.2236068 ],
+       [0.14142136, 0.24494897, 0.26457513, 0.26457513, 0.26457513],
+       [0.14142136, 0.17320508, 0.2236068 , 0.24494897, 0.26457513],
+       [0.14142136, 0.14142136, 0.17320508, 0.17320508, 0.2236068 ],
+       [0.33166248, 0.34641016, 0.36055513, 0.37416574, 0.38729833],
+       [0.2236068 , 0.26457513, 0.3       , 0.31622777, 0.31622777],
+       [0.1       , 0.14142136, 0.17320508, 0.2       , 0.2236068 ],
+       [0.14142136, 0.3       , 0.31622777, 0.34641016, 0.36055513],
+       [0.1       , 0.17320508, 0.17320508, 0.17320508, 0.2       ],
+       [0.1       , 0.28284271, 0.3       , 0.33166248, 0.33166248],
+       [0.2236068 , 0.2236068 , 0.28284271, 0.3       , 0.3       ],
+       [0.14142136, 0.17320508, 0.2       , 0.2       , 0.24494897],
+       [0.24494897, 0.31622777, 0.34641016, 0.47958315, 0.5       ],
+       [0.41231056, 0.46904158, 0.54772256, 0.55677644, 0.58309519],
+       [0.36055513, 0.54772256, 0.6164414 , 0.6164414 , 0.64031242],
+       [0.34641016, 0.36055513, 0.38729833, 0.38729833, 0.4       ],
+       [0.1       , 0.14142136, 0.17320508, 0.17320508, 0.17320508],
+       [0.33166248, 0.38729833, 0.46904158, 0.50990195, 0.51961524],
+       [0.14142136, 0.14142136, 0.24494897, 0.26457513, 0.31622777],
+       [0.28284271, 0.3       , 0.36055513, 0.36055513, 0.36055513],
+       [0.14142136, 0.24494897, 0.24494897, 0.26457513, 0.28284271],
+       [0.45825757, 0.50990195, 0.50990195, 0.51961524, 0.53851648],
+       [0.2       , 0.26457513, 0.37416574, 0.38729833, 0.38729833],
+       [0.3       , 0.37416574, 0.41231056, 0.42426407, 0.4472136 ],
+       [0.17320508, 0.2       , 0.2236068 , 0.2236068 , 0.3       ],
+       [0.2       , 0.2236068 , 0.2236068 , 0.24494897, 0.26457513],
+       [0.14142136, 0.14142136, 0.14142136, 0.17320508, 0.2236068 ],
+       [0.14142136, 0.14142136, 0.14142136, 0.17320508, 0.2236068 ],
+       [0.14142136, 0.17320508, 0.2236068 , 0.2236068 , 0.24494897],
+       [0.14142136, 0.14142136, 0.17320508, 0.2236068 , 0.2236068 ],
+       [0.28284271, 0.3       , 0.3       , 0.31622777, 0.34641016],
+       [0.34641016, 0.34641016, 0.37416574, 0.42426407, 0.45825757],
+       [0.34641016, 0.36055513, 0.38729833, 0.41231056, 0.47958315],
+       [0.1       , 0.14142136, 0.14142136, 0.17320508, 0.2       ],
+       [0.2236068 , 0.3       , 0.31622777, 0.33166248, 0.33166248],
+       [0.3       , 0.31622777, 0.33166248, 0.34641016, 0.36055513],
+       [0.14142136, 0.24494897, 0.26457513, 0.26457513, 0.3       ],
+       [0.14142136, 0.2       , 0.24494897, 0.3       , 0.3       ],
+       [0.1       , 0.14142136, 0.14142136, 0.14142136, 0.17320508],
+       [0.14142136, 0.17320508, 0.17320508, 0.24494897, 0.24494897],
+       [0.6244998 , 0.71414284, 0.76811457, 0.78102497, 0.79372539],
+       [0.2       , 0.2236068 , 0.3       , 0.3       , 0.31622777],
+       [0.2236068 , 0.26457513, 0.31622777, 0.37416574, 0.42426407],
+       [0.36055513, 0.37416574, 0.41231056, 0.41231056, 0.47958315],
+       [0.14142136, 0.2       , 0.2       , 0.24494897, 0.26457513],
+       [0.14142136, 0.24494897, 0.24494897, 0.3       , 0.33166248],
+       [0.14142136, 0.14142136, 0.2236068 , 0.2236068 , 0.2236068 ],
+       [0.1       , 0.2236068 , 0.24494897, 0.24494897, 0.28284271],
+       [0.14142136, 0.17320508, 0.2236068 , 0.2236068 , 0.2236068 ],
+       [0.26457513, 0.33166248, 0.43588989, 0.45825757, 0.51961524],
+       [0.26457513, 0.31622777, 0.34641016, 0.37416574, 0.38729833],
+       [0.26457513, 0.28284271, 0.31622777, 0.34641016, 0.50990195],
+       [0.2       , 0.3       , 0.31622777, 0.43588989, 0.43588989],
+       [0.24494897, 0.31622777, 0.37416574, 0.37416574, 0.38729833],
+       [0.3       , 0.31622777, 0.31622777, 0.33166248, 0.37416574],
+       [0.26457513, 0.37416574, 0.42426407, 0.45825757, 0.45825757],
+       [0.14142136, 0.38729833, 0.45825757, 0.72111026, 0.78740079],
+       [0.24494897, 0.24494897, 0.31622777, 0.31622777, 0.31622777],
+       [0.38729833, 0.50990195, 0.51961524, 0.52915026, 0.53851648],
+       [0.36055513, 0.45825757, 0.67082039, 0.71414284, 0.72111026],
+       [0.3       , 0.33166248, 0.36055513, 0.36055513, 0.37416574],
+       [0.48989795, 0.51961524, 0.54772256, 0.58309519, 0.58309519],
+       [0.14142136, 0.2236068 , 0.24494897, 0.42426407, 0.43588989],
+       [0.42426407, 0.4472136 , 0.50990195, 0.51961524, 0.53851648],
+       [0.14142136, 0.31622777, 0.31622777, 0.34641016, 0.38729833],
+       [0.2       , 0.3       , 0.38729833, 0.41231056, 0.42426407],
+       [0.24494897, 0.28284271, 0.33166248, 0.36055513, 0.37416574],
+       [0.26457513, 0.50990195, 0.53851648, 0.678233  , 0.70710678],
+       [0.17320508, 0.24494897, 0.26457513, 0.26457513, 0.3       ],
+       [0.2236068 , 0.3       , 0.36055513, 0.42426407, 0.46904158],
+       [0.33166248, 0.34641016, 0.37416574, 0.4       , 0.41231056],
+       [0.36055513, 0.36055513, 0.41231056, 0.42426407, 0.43588989],
+       [0.2236068 , 0.3       , 0.38729833, 0.43588989, 0.45825757],
+       [0.2       , 0.26457513, 0.36055513, 0.38729833, 0.38729833],
+       [0.14142136, 0.24494897, 0.26457513, 0.31622777, 0.31622777],
+       [0.31622777, 0.34641016, 0.34641016, 0.37416574, 0.42426407],
+       [0.31622777, 0.37416574, 0.41231056, 0.42426407, 0.42426407],
+       [0.2       , 0.24494897, 0.33166248, 0.34641016, 0.37416574],
+       [0.34641016, 0.42426407, 0.43588989, 0.4472136 , 0.46904158],
+       [0.14142136, 0.17320508, 0.3       , 0.3       , 0.42426407],
+       [0.14142136, 0.26457513, 0.34641016, 0.43588989, 0.43588989],
+       [0.14142136, 0.26457513, 0.28284271, 0.3       , 0.34641016],
+       [0.33166248, 0.36055513, 0.36055513, 0.37416574, 0.41231056],
+       [0.2       , 0.41231056, 0.47958315, 0.48989795, 0.50990195],
+       [0.37416574, 0.42426407, 0.45825757, 0.46904158, 0.50990195],
+       [0.28284271, 0.31622777, 0.31622777, 0.33166248, 0.34641016],
+       [0.26457513, 0.57445626, 0.59160798, 0.60827625, 0.6164414 ],
+       [0.17320508, 0.17320508, 0.2236068 , 0.31622777, 0.37416574],
+       [0.2       , 0.24494897, 0.3       , 0.3       , 0.33166248],
+       [0.26457513, 0.31622777, 0.42426407, 0.42426407, 0.42426407],
+       [0.14142136, 0.2       , 0.3       , 0.34641016, 0.38729833],
+       [0.14142136, 0.24494897, 0.26457513, 0.26457513, 0.31622777],
+       [0.14142136, 0.36055513, 0.38729833, 0.64807407, 0.72111026],
+       [0.17320508, 0.2236068 , 0.26457513, 0.3       , 0.31622777],
+       [0.14142136, 0.17320508, 0.24494897, 0.33166248, 0.36055513],
+       [0.14142136, 0.14142136, 0.17320508, 0.2236068 , 0.3       ],
+       [0.2       , 0.33166248, 0.34641016, 0.34641016, 0.38729833],
+       [0.38729833, 0.38729833, 0.72111026, 0.79372539, 0.81853528],
+       [0.14142136, 0.17320508, 0.2236068 , 0.24494897, 0.26457513],
+       [0.42426407, 0.5       , 0.50990195, 0.55677644, 0.60827625],
+       [0.        , 0.26457513, 0.31622777, 0.33166248, 0.36055513],
+       [0.38729833, 0.4       , 0.41231056, 0.45825757, 0.5       ],
+       [0.24494897, 0.24494897, 0.33166248, 0.38729833, 0.42426407],
+       [0.3       , 0.31622777, 0.36055513, 0.38729833, 0.38729833],
+       [0.26457513, 0.52915026, 0.54772256, 0.54772256, 0.60827625],
+       [0.73484692, 0.76157731, 0.79372539, 0.87749644, 0.88317609],
+       [0.26457513, 0.43588989, 0.52915026, 0.54772256, 0.55677644],
+       [0.55677644, 0.6       , 0.6164414 , 0.6164414 , 0.6244998 ],
+       [0.63245553, 0.67082039, 0.70710678, 0.75498344, 0.80622577],
+       [0.2236068 , 0.37416574, 0.42426407, 0.42426407, 0.46904158],
+       [0.34641016, 0.37416574, 0.37416574, 0.38729833, 0.38729833],
+       [0.17320508, 0.34641016, 0.36055513, 0.37416574, 0.37416574],
+       [0.26457513, 0.26457513, 0.33166248, 0.51961524, 0.54772256],
+       [0.48989795, 0.50990195, 0.50990195, 0.51961524, 0.64031242],
+       [0.3       , 0.37416574, 0.37416574, 0.38729833, 0.38729833],
+       [0.14142136, 0.24494897, 0.36055513, 0.38729833, 0.38729833],
+       [0.41231056, 0.81853528, 0.86023253, 1.00498756, 1.0198039 ],
+       [0.41231056, 0.54772256, 0.89442719, 0.92736185, 0.96436508],
+       [0.43588989, 0.51961524, 0.53851648, 0.58309519, 0.65574385],
+       [0.2236068 , 0.26457513, 0.3       , 0.3       , 0.36055513],
+       [0.31622777, 0.31622777, 0.33166248, 0.45825757, 0.48989795],
+       [0.26457513, 0.41231056, 0.60827625, 0.678233  , 0.7       ],
+       [0.17320508, 0.24494897, 0.36055513, 0.36055513, 0.37416574],
+       [0.3       , 0.31622777, 0.37416574, 0.37416574, 0.38729833],
+       [0.34641016, 0.38729833, 0.43588989, 0.46904158, 0.64807407],
+       [0.17320508, 0.24494897, 0.28284271, 0.38729833, 0.42426407],
+       [0.14142136, 0.24494897, 0.28284271, 0.3       , 0.36055513],
+       [0.1       , 0.31622777, 0.33166248, 0.37416574, 0.38729833],
+       [0.34641016, 0.50990195, 0.51961524, 0.55677644, 0.70710678],
+       [0.26457513, 0.45825757, 0.46904158, 0.50990195, 0.53851648],
+       [0.41231056, 0.88317609, 0.92736185, 0.93273791, 1.02469508],
+       [0.1       , 0.3       , 0.42426407, 0.43588989, 0.46904158],
+       [0.33166248, 0.36055513, 0.37416574, 0.43588989, 0.45825757],
+       [0.53851648, 0.55677644, 0.58309519, 0.66332496, 0.7       ],
+       [0.53851648, 0.54772256, 0.66332496, 0.678233  , 0.7       ],
+       [0.24494897, 0.38729833, 0.42426407, 0.43588989, 0.5       ],
+       [0.14142136, 0.24494897, 0.38729833, 0.43588989, 0.45825757],
+       [0.14142136, 0.2236068 , 0.28284271, 0.31622777, 0.43588989],
+       [0.17320508, 0.36055513, 0.36055513, 0.37416574, 0.41231056],
+       [0.24494897, 0.26457513, 0.34641016, 0.34641016, 0.36055513],
+       [0.24494897, 0.36055513, 0.46904158, 0.50990195, 0.51961524],
+       [0.        , 0.26457513, 0.31622777, 0.33166248, 0.36055513],
+       [0.2236068 , 0.31622777, 0.31622777, 0.34641016, 0.38729833],
+       [0.24494897, 0.3       , 0.31622777, 0.4       , 0.43588989],
+       [0.24494897, 0.36055513, 0.36055513, 0.37416574, 0.37416574],
+       [0.24494897, 0.37416574, 0.38729833, 0.41231056, 0.47958315],
+       [0.2236068 , 0.34641016, 0.36055513, 0.36055513, 0.38729833],
+       [0.24494897, 0.3       , 0.55677644, 0.6164414 , 0.6244998 ],
+       [0.28284271, 0.31622777, 0.33166248, 0.33166248, 0.36055513]])</code></pre>
+</div>
+</div>
+<p>Now we calculate outlier scores based on the distance metric.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>outlier_scores <span class="op">=</span> distances[:, <span class="op">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we shall set our threshold for the outliers. This can be adjusted accordingly, but for now, we shall keep our threshold at the 95th percentile.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> np.percentile(outlier_scores, <span class="dv">95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s see what our outliers are.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>outliers <span class="op">=</span> np.where(outlier_scores <span class="op">&gt;</span> threshold)[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s visualize the outliers that we have found so far:</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>plt.scatter(numeric_data.iloc[:, <span class="dv">0</span>], numeric_data.iloc[:, <span class="dv">1</span>], label<span class="op">=</span><span class="st">'Data Points'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(numeric_data.iloc[outliers, <span class="dv">0</span>], numeric_data.iloc[outliers, <span class="dv">1</span>],</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>            c<span class="op">=</span><span class="st">'r'</span>, s<span class="op">=</span><span class="dv">100</span>, label<span class="op">=</span><span class="st">'Outliers'</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Sepal Length (cm)'</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Sepal Width (cm)'</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Outlier Detection with KNN'</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="Anomaly-detection_files/figure-html/cell-11-output-1.png" width="663" height="523"></p>
+</div>
+</div>
+</section>
+<section id="the-isolation-forest-algorithm-for-anomalies" class="level2">
+<h2 class="anchored" data-anchor-id="the-isolation-forest-algorithm-for-anomalies">The Isolation Forest Algorithm For Anomalies</h2>
+<p>We now use the Isolation Forest algorithm for classifying anomalies. Developed by Liu, Ting, and Zhou in 2008, the IsolationForest algorithm stands out for its ability to efficiently isolate anomalies within a dataset. Unlike traditional distance or density-based methods, IsolationForest utilizes a tree-based structure to identify anomalies based on their isolation from the majority of data points.</p>
+<p>The key concepts used in the Isolation Forest algorithm are:</p>
+<ul>
+<li>IsolationForest randomly selects features and splits data points, recursively creating isolation trees. This is called random partitioning.</li>
+<li>Anomalies are expected to have shorter path lengths in the trees, resulting in fewer partitions to be isolated.</li>
+</ul>
+<p>The methodology for the Isolation Forest is as follows: First we select features and split the data points until they are isolated or a specific tree length is reached. Now we calculate the average path length to isolate each data point across multiple trees. Then, as mentioned before, shorter path lengths are considered to be anomalies.</p>
+<p>Now, we shall put this theory into practice. Using the same dataset, we shall invoke an <code>IsolationForest</code> object to classify the numeric dataset.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> IsolationForest</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create IsolationForest model</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>clf <span class="op">=</span> IsolationForest()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>clf.fit(numeric_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<style>#sk-container-id-2 {color: black;}#sk-container-id-2 pre{padding: 0;}#sk-container-id-2 div.sk-toggleable {background-color: white;}#sk-container-id-2 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-2 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-2 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-2 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-2 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-2 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-2 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-2 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-2 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-2 div.sk-item {position: relative;z-index: 1;}#sk-container-id-2 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-2 div.sk-item::before, #sk-container-id-2 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-2 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-2 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-2 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-2 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-2 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-2 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-2 div.sk-label-container {text-align: center;}#sk-container-id-2 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-2 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>IsolationForest()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked=""><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">IsolationForest</label><div class="sk-toggleable__content"><pre>IsolationForest()</pre></div></div></div></div></div>
+</div>
+</div>
+<p>Lets see what are the outliers in the dataset.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>outliers <span class="op">=</span> clf.predict(numeric_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now lets visualize the results:</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>plt.scatter(numeric_data.iloc[:, <span class="dv">0</span>], numeric_data.iloc[:, <span class="dv">1</span>], c<span class="op">=</span>outliers, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Sepal Length (cm)'</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Sepal Width (cm)'</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Outlier Detection in Iris Dataset using IsolationForest'</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>plt.colorbar(label<span class="op">=</span><span class="st">'Outlier Score'</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="Anomaly-detection_files/figure-html/cell-14-output-1.png" width="665" height="523"></p>
+</div>
+</div>
+<p>Here darker shades represents higher outlier scores, which means they are definitely outliers.</p>
+<p>Therefore, we have seen how we can perform outlier detection in python with these elementary algorithms and we have visualized the effectiveness of the algorithms.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

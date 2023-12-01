@@ -1,0 +1,11 @@
+---
+title: "Hi, I'm Turbasu, a second-year PhD student at Virginia Tech."
+about: 
+    template: broadside
+    image: profile.jpg
+---
+
+I am a Ph.D. student, fortunate enough to be advised by Dr. Jamie Sikora and part of the group QuantumCS@VT. My research lies at the intersection of quantum information theory and online learning techniques. Prior to joining Virginia Tech, I had completed my BTech in computer science and engineering from Maulana Abul Kalam Azad University of Technology, West Bengal, India. 
+
+
+I am a sucker for jazz and post-rock. I also religiously play CS:GO (now CS2) and an avid meme connoisseur. I will also rarely turn down offers to have a Chipotle bowl. 
